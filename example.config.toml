@@ -1,0 +1,82 @@
+# Copy this file to config.toml and edit for your environment.
+# config.toml is gitignored so your local settings stay out of the repo.
+
+[task]
+goal = """
+    Create a browser-based graphical scientific calculator in /tmp/harness_workspace/webcalc/:
+
+    Build a single-page web application with three files:
+      - index.html — the calculator UI (clickable button grid + display)
+      - styles.css — visual styling (clean, modern look; usable layout)
+      - calculator.js — calculator logic and DOM event handling
+
+    The UI must include clickable buttons for:
+      - Digits 0–9 and decimal point
+      - Basic arithmetic: + − × ÷
+      - Scientific: sin, cos, tan, sqrt, log (base 10), ln (natural log),
+        exp, x^y (power), π, e
+      - A toggle button switching between degrees and radians (for trig)
+      - Memory: M+ (store), MR (recall), MC (clear)
+      - = (evaluate), C (clear current entry), AC (all-clear)
+      - A display element showing the current expression and result
+
+    Behavior requirements:
+      - Math is correct (use JavaScript's Math.* functions; respect deg/rad toggle for trig)
+      - Division by zero displays the text "Error"
+      - sqrt of a negative number displays "Error"
+      - Each button click updates the display immediately
+
+    Acceptance testing must use the Playwright MCP tools (browser_navigate,
+    browser_click, browser_snapshot, etc.):
+      - Open file:///tmp/harness_workspace/webcalc/index.html in the browser
+      - Verify clicking 2 + 3 = shows "5" in the display
+      - Verify clicking sin 9 0 = in degrees mode shows ~1 (approx comparison)
+      - Verify clicking 1 ÷ 0 = shows "Error"
+      - Verify M+ stores a value and MR recalls it
+      - Verify toggling degrees/radians changes trig behavior
+
+    All Playwright-driven checks must pass.
+    """
+
+[vertex]
+# GCP project — also accepts GOOGLE_CLOUD_PROJECT env var as fallback
+project = "your-gcp-project-id"
+
+[orchestrator]
+model      = "claude-opus-4-7"
+region = "us"
+max_tokens = 16000
+
+[evaluator]
+model      = "claude-haiku-4-5"
+region = "us-east5"
+max_tokens = 1024
+
+[inspector]
+model      = "claude-sonnet-4-6"
+region = "us-east5"
+max_tokens = 4000
+max_tool_rounds = 10
+
+[executor]
+# provider: "openai-compat" (local llama.cpp) or "anthropic" (Vertex Claude)
+provider        = "anthropic"
+# openai-compat settings
+base_url        = "http://localhost:8001/v1"
+# anthropic settings
+region          = "us-east5"
+# both
+model           = "claude-haiku-4-5"   # use "local" when provider="openai-compat"
+temperature     = 0.2
+max_tokens      = 4096
+max_tool_rounds = 20
+
+[harness]
+work_dir    = "/tmp/harness_workspace"
+max_retries = 3
+max_replans = 3
+
+[mcp.playwright]
+enabled = true
+command = "npx"
+args    = ["@playwright/mcp@latest", "--headless"]

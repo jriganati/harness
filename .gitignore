@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Editor / tooling
+.idea/
+.vscode/
+
+# Harness runtime artifacts
+runs/
+.playwright-mcp/
+
+# Local Claude state (memory, settings, plans)
+.claude/
+
+# Local config — copy example.config.toml to config.toml and edit
+config.toml
